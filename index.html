@@ -233,7 +233,7 @@ document.getElementById("download").addEventListener("click",()=>{
         ffmpeg.FS('unlink', 'compressed.mp4');
       } catch (_) {}
     } catch (error) {
-      status.textContent = 'Compression failed. Try a shorter video or a smaller file.';
+      status.textContent = 'Error: ' + (error.message || String(error));
       console.error(error);
     } finally {
       button.disabled = false;
