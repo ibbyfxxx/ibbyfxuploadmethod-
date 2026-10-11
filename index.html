@@ -131,5 +131,115 @@ document.getElementById("download").addEventListener("click",()=>{
  a.click();
 });
 </script>
+
+<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
+
+<div id="ibbyfx-compressor" style="margin:24px 0;padding:20px;background:#151525;color:white;border-radius:16px;font-family:Arial,sans-serif">
+  <h2 style="margin-top:0">🎬 IbbyFX Video Compressor</h2>
+  <p>Select a video above, then compress it here.</p>
+  <button id="compressBtn" style="padding:14px 18px;border:0;border-radius:10px;background:#7c3aed;color:white;font-weight:bold;font-size:16px">
+    Compress Video
+  </button>
+  <p id="compressStatus">Ready — choose a short video to test.</p>
+  <video id="compressedPreview" controls playsinline style="display:none;width:100%;max-width:500px;border-radius:10px"></video>
+  <p id="compressedSize"></p>
+  <a id="downloadCompressed" style="display:none;color:#a78bfa;font-weight:bold" download="ibbyfx-compressed.mp4">⬇️ Download Compressed Video</a>
+</div>
+
+<script>
+(() => {
+  const input = document.getElementById('videoUpload');
+  const button = document.getElementById('compressBtn');
+  const status = document.getElementById('compressStatus');
+  const preview = document.getElementById('compressedPreview');
+  const sizeText = document.getElementById('compressedSize');
+  const download = document.getElementById('downloadCompressed');
+
+  if (!input) {
+    status.textContent = 'Upload input not found. Check that your file input has id="videoUpload".';
+    button.disabled = true;
+    return;
+  }
+
+  let ffmpegInstance;
+  let outputURL;
+
+  button.addEventListener('click', async () => {
+    const file = input.files && input.files[0];
+
+    if (!file) {
+      status.textContent = 'Please tap Add Video and select a video first.';
+      return;
+    }
+
+    if (file.size > 150 * 1024 * 1024) {
+      status.textContent = 'This first version is limited to test files under 150 MB. Try a shorter clip.';
+      return;
+    }
+
+    button.disabled = true;
+    download.style.display = 'none';
+    status.textContent = 'Loading compression engine… The first load may take a while.';
+
+    try {
+      if (!ffmpegInstance) {
+        const { createFFmpeg, fetchFile } = FFmpeg;
+        ffmpegInstance = createFFmpeg({
+          log: false,
+          corePath: 'https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js'
+        });
+        await ffmpegInstance.load();
+        ffmpegInstance.fetchFile = fetchFile;
+      }
+
+      const ffmpeg = ffmpegInstance;
+      const safeName = 'input.' +
+        ((file.name.split('.').pop() || 'mp4').replace(/[^a-z0-9]/gi, ''));
+
+      status.textContent = 'Compressing… Keep this page open. It may take several minutes on an iPhone.';
+      ffmpeg.FS('writeFile', safeName, await ffmpeg.fetchFile(file));
+
+      await ffmpeg.run(
+        '-i', safeName,
+        '-c:v', 'libx264',
+        '-crf', '26',
+        '-preset', 'ultrafast',
+        '-c:a', 'aac',
+        '-b:a', '128k',
+        '-movflags', '+faststart',
+        'compressed.mp4'
+      );
+
+      const data = ffmpeg.FS('readFile', 'compressed.mp4');
+      const blob = new Blob([data], { type: 'video/mp4' });
+
+      if (outputURL) URL.revokeObjectURL(outputURL);
+      outputURL = URL.createObjectURL(blob);
+
+      preview.src = outputURL;
+      preview.style.display = 'block';
+      download.href = outputURL;
+      download.style.display = 'inline-block';
+      sizeText.textContent =
+        'Original: ' + (file.size / 1048576).toFixed(1) +
+        ' MB · Compressed: ' + (blob.size / 1048576).toFixed(1) + ' MB';
+
+      status.textContent = blob.size < file.size
+        ? '✅ Compression complete!'
+        : '✅ Finished, but the output is not smaller. You can still download it.';
+
+      try {
+        ffmpeg.FS('unlink', safeName);
+        ffmpeg.FS('unlink', 'compressed.mp4');
+      } catch (_) {}
+    } catch (error) {
+      status.textContent = 'Compression failed. Try a shorter video or a smaller file.';
+      console.error(error);
+    } finally {
+      button.disabled = false;
+    }
+  });
+})();
+</script>
 </body>
 </html>
