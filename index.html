@@ -40,7 +40,34 @@ footer{text-align:center;padding:25px;color:#8588a2}
 <div class="upload">
 <p>Select a video from your iPhone</p>
 <label class="pick" for="file">Choose video</label>
-<input id="file" type="file" accept="video/*">
+<label for="videoUpload" class="upload-btn">
+  📁 Add Video
+</label>
+
+<input
+  id="videoUpload"
+  type="file"
+  accept="video/*"
+  hidden
+>
+
+<style>
+  .upload-btn {
+    display: inline-block;
+    padding: 16px 28px;
+    background: linear-gradient(135deg, #7c3aed, #2563eb);
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    border-radius: 14px;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  .upload-btn:hover {
+    opacity: 0.9;
+  }
+</style>
 <p class="small">MP4 · MOV · Other browser-supported formats</p>
 </div>
 <video id="preview" controls playsinline hidden></video>
