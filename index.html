@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IbbyFX UPLOAD METHOD</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080914;color:#f5f5ff;font-family:Arial,sans-serif}
+header{padding:20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #292a46}
+.logo{font-size:19px;font-weight:800}
+.logo span{color:#a78bfa}
+main{max-width:780px;margin:35px auto;padding:18px}
+h1{font-size:34px}
+p{color:#adb0ca;line-height:1.5}
+.panel{background:#121426;border:1px solid #292a46;border-radius:18px;padding:22px;margin:20px 0}
+.upload{border:2px dashed #7656bd;border-radius:14px;padding:30px 12px;text-align:center}
+button,.pick{display:inline-block;background:#8b5cf6;color:white;border:0;border-radius:10px;padding:13px 18px;font-weight:bold;cursor:pointer}
+#file{display:none}
+video{width:100%;max-height:380px;margin-top:20px;background:#000;border-radius:12px}
+.info{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.item{background:#1b1d32;padding:13px;border-radius:10px;overflow-wrap:anywhere}
+.small{font-size:12px;color:#a7a9c2}
+footer{text-align:center;padding:25px;color:#8588a2}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">IbbyFX <span>UPLOAD METHOD</span></div>
+<div class="small">VIDEO TOOLS</div>
+</header>
+<main>
+<p>BUILT FOR VIDEO EDITORS</p>
+<h1>Upload. Optimize. Share.</h1>
+<p>Your home for football edits and social video preparation.</p>
+
+<section class="panel">
+<h2>Video optimizer</h2>
+<div class="upload">
+<p>Select a video from your iPhone</p>
+<label class="pick" for="file">Choose video</label>
+<input id="file" type="file" accept="video/*">
+<p class="small">MP4 · MOV · Other browser-supported formats</p>
+</div>
+<video id="preview" controls playsinline hidden></video>
+<div id="details" hidden>
+<h3 id="filename"></h3>
+<div class="info">
+<div class="item">File size<br><strong id="size">—</strong></div>
+<div class="item">Resolution<br><strong id="resolution">—</strong></div>
+<div class="item">Duration<br><strong id="duration">—</strong></div>
+<div class="item">Frame rate<br><strong>Not detected</strong></div>
+</div>
+<p id="notice"></p>
+<button id="download">Download original</button>
+</div>
+</section>
+
+<section class="panel">
+<h2>Access system</h2>
+<p>Telegram members: unlimited website upload quota.</p>
+<p>Non-members: five uploads per calendar week.</p>
+<p class="small">Membership verification and upload limits require a secure backend and are not active in this starter version.</p>
+</section>
+
+<section class="panel">
+<h2>More tools</h2>
+<p>Compression · Video hosting · Shareable links ·
+1080p/60 FPS · 120 FPS source support · Auto-posting</p>
+<p class="small">These features must be connected to their processing, storage and platform integrations before they work.</p>
+</section>
+</main>
+<footer>IBBYFX UPLOAD METHOD</footer>
+<script>
+const input=document.getElementById("file");
+const preview=document.getElementById("preview");
+const details=document.getElementById("details");
+let url=null;
+
+input.addEventListener("change",()=>{
+ const f=input.files[0];
+ if(!f)return;
+ if(url)URL.revokeObjectURL(url);
+ url=URL.createObjectURL(f);
+ preview.src=url;
+ preview.hidden=false;
+ details.hidden=false;
+ document.getElementById("filename").textContent=f.name;
+ document.getElementById("size").textContent=(f.size/1048576).toFixed(2)+" MB";
+ document.getElementById("resolution").textContent="Reading...";
+ document.getElementById("duration").textContent="Reading...";
+ document.getElementById("notice").textContent="Local preview only. This file has not been uploaded.";
+ preview.onloadedmetadata=()=>{
+  document.getElementById("resolution").textContent=preview.videoWidth+" × "+preview.videoHeight;
+  document.getElementById("duration").textContent=Number.isFinite(preview.duration)?Math.round(preview.duration)+" seconds":"Unknown";
+ };
+});
+document.getElementById("download").addEventListener("click",()=>{
+ if(!url)return;
+ const a=document.createElement("a");
+ a.href=url;
+ a.download=input.files[0].name;
+ a.click();
+});
+</script>
+</body>
+</html>
