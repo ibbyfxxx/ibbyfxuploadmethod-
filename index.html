@@ -3,546 +3,642 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#090914">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#08090d">
   <title>IbbyFX UPLOAD METHOD</title>
 
   <style>
     :root {
       color-scheme: dark;
-      --bg: #090914;
-      --panel: #141426;
-      --muted: #aaa9c3;
-      --purple: #853cff;
-      --blue: #326bff;
-      --border: #2c2b45;
+      --bg: #08090d;
+      --panel: #12141b;
+      --border: #292c38;
+      --text: #f6f7fb;
+      --muted: #a2a7b8;
+      --accent: #a855f7;
+      --accent2: #6d5dfc;
     }
 
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      background: var(--bg);
-      color: white;
-      font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+      padding: 22px 14px 40px;
+      background: radial-gradient(ellipse at top, #20113b 0, var(--bg) 48%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    header {
-      padding: 24px 18px;
-      border-bottom: 1px solid var(--border);
-      text-align: center;
-    }
+    main { max-width: 760px; margin: auto; }
+
+    header { text-align: center; padding: 20px 0 28px; }
 
     .logo {
-      font-size: 24px;
-      font-weight: 900;
-      letter-spacing: -1px;
+      display: inline-block;
+      padding: 8px 13px;
+      border: 1px solid #7040a0;
+      border-radius: 999px;
+      color: #d8b4fe;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 2px;
     }
 
-    .logo span { color: #a879ff; }
-
-    .tagline {
-      color: var(--muted);
-      font-size: 13px;
-      margin-top: 8px;
+    h1 {
+      margin: 18px 0 8px;
+      font-size: clamp(28px, 7vw, 43px);
+      line-height: 1.1;
+      letter-spacing: -1.5px;
     }
 
-    main {
-      width: min(680px, 100%);
-      margin: auto;
-      padding: 22px 16px 50px;
+    h1 span {
+      color: #c084fc;
+      display: block;
     }
 
-    .hero { margin: 12px 0 24px; }
-
-    h1 { font-size: 30px; margin: 0 0 10px; }
-
-    h2 { font-size: 19px; margin-top: 0; }
-
-    p { line-height: 1.55; }
-
-    .muted { color: var(--muted); }
+    .subtitle { color: var(--muted); line-height: 1.6; }
 
     .panel {
-      background: var(--panel);
+      padding: 18px;
+      margin-bottom: 16px;
       border: 1px solid var(--border);
       border-radius: 18px;
-      padding: 20px;
-      margin: 16px 0;
+      background: rgba(18, 20, 27, .96);
     }
 
-    .actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin: 18px 0;
-    }
+    h2 { font-size: 17px; margin: 0 0 14px; }
 
-    button, .download {
-      border: 0;
-      border-radius: 12px;
-      padding: 14px 12px;
-      font-size: 15px;
-      font-weight: 750;
-      cursor: pointer;
+    .dropzone {
+      display: block;
+      padding: 26px 14px;
       text-align: center;
-      text-decoration: none;
+      border: 1.5px dashed #7650a3;
+      border-radius: 14px;
+      background: #171323;
+      cursor: pointer;
     }
 
-    button:disabled {
-      opacity: .5;
-      cursor: not-allowed;
-    }
+    .upload-icon { font-size: 34px; margin-bottom: 10px; }
+    .dropzone strong { display: block; margin-bottom: 7px; }
+    .muted, small { color: var(--muted); line-height: 1.5; }
 
-    .primary {
-      color: white;
-      background: linear-gradient(120deg, var(--purple), var(--blue));
-    }
-
-    .secondary {
-      color: white;
-      background: #25243c;
-      border: 1px solid #393755;
-    }
-
-    .wide { width: 100%; }
-
-    input[type="file"] {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-    }
+    input[type="file"] { display: none; }
 
     video {
       display: block;
       width: 100%;
-      max-height: 360px;
-      background: #050508;
-      border-radius: 12px;
+      max-height: 440px;
       margin-top: 14px;
+      border-radius: 12px;
+      background: #000;
     }
 
     .file-info {
-      overflow-wrap: anywhere;
-      color: var(--muted);
-      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
       margin-top: 12px;
+      font-size: 13px;
+      color: var(--muted);
+      overflow-wrap: anywhere;
     }
 
-    label.setting {
+    .field { margin-top: 17px; }
+
+    label.field-label {
       display: block;
-      margin: 18px 0 8px;
+      margin-bottom: 8px;
+      font-size: 13px;
       font-weight: 700;
     }
 
     select {
       width: 100%;
-      padding: 13px;
+      min-height: 48px;
+      padding: 12px;
+      border: 1px solid var(--border);
       border-radius: 10px;
-      background: #202038;
-      color: white;
-      border: 1px solid #393755;
+      background: #0d0f15;
+      color: var(--text);
       font-size: 15px;
+    }
+
+    button, .download-link {
+      display: block;
+      width: 100%;
+      min-height: 49px;
+      padding: 14px 16px;
+      margin-top: 12px;
+      border: 0;
+      border-radius: 11px;
+      background: linear-gradient(100deg, var(--accent), var(--accent2));
+      color: white;
+      font-size: 15px;
+      font-weight: 800;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      border: 1px solid var(--border);
+      background: #20222c;
+    }
+
+    button:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .progress-wrap { margin-top: 18px; }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+      margin-bottom: 9px;
     }
 
     progress {
       width: 100%;
-      height: 12px;
-      accent-color: #9a65ff;
-      margin: 12px 0;
+      height: 10px;
+      border: 0;
+      border-radius: 99px;
+      overflow: hidden;
+      accent-color: var(--accent);
     }
 
-    #status {
-      color: #d8d5ef;
-      overflow-wrap: anywhere;
-      font-size: 14px;
+    progress::-webkit-progress-bar {
+      background: #292b36;
+      border-radius: 99px;
     }
 
-    .download {
-      display: block;
-      margin-top: 16px;
-      color: white;
-      background: #207b50;
+    progress::-webkit-progress-value {
+      background: linear-gradient(90deg, var(--accent), #818cf8);
+      border-radius: 99px;
     }
 
-    .note {
-      font-size: 13px;
+    .status {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #0d0f15;
       color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    .warning {
+      margin-top: 12px;
+      color: #fcd34d;
+      font-size: 12px;
+      line-height: 1.6;
     }
 
     .feature {
       padding: 12px 0;
       border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 14px;
     }
 
     .feature:last-child { border-bottom: 0; }
-
-    .pill {
-      display: inline-block;
-      color: #d5baff;
-      background: #30204b;
-      border-radius: 20px;
-      padding: 5px 9px;
-      font-size: 11px;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
+    .feature b { color: var(--text); }
 
     footer {
+      padding: 12px;
       text-align: center;
       color: var(--muted);
-      padding: 24px 12px;
       font-size: 12px;
-    }
-
-    @media (max-width: 380px) {
-      .actions { grid-template-columns: 1fr; }
-      h1 { font-size: 26px; }
+      line-height: 1.7;
     }
   </style>
 </head>
 
 <body>
-<header>
-  <div class="logo">IbbyFX <span>UPLOAD METHOD</span></div>
-  <div class="tagline">YOUR VIDEO. YOUR QUALITY. YOUR METHOD.</div>
-</header>
-
 <main>
-  <section class="hero">
-    <div class="pill">BROWSER VIDEO TOOL</div>
-    <h1>Compress your videos 🎬</h1>
-    <p class="muted">
-      Select a video, adjust the compression quality,
-      then download the processed file to your device.
-    </p>
-  </section>
+  <header>
+    <div class="logo">IBBYFX</div>
+    <h1>UPLOAD <span>METHOD</span></h1>
+    <div class="subtitle">
+      Prepare your videos for editing and social media.<br>
+      Choose a video, compress it, then save your result.
+    </div>
+  </header>
 
   <section class="panel">
-    <h2>1. Choose your video</h2>
-    <p class="muted">Select a video from your iPhone Photos or Files.</p>
+    <h2>01 — Select your video</h2>
+
+    <label class="dropzone" for="videoUpload">
+      <div class="upload-icon">⬆️</div>
+      <strong>Choose a video from your iPhone</strong>
+      <span class="muted">MP4, MOV and other browser-supported video formats</span>
+    </label>
 
     <input id="videoUpload" type="file" accept="video/*">
 
-    <div class="actions">
-      <button id="addVideo" class="primary" type="button">
-        📁 Add Video
-      </button>
-      <button id="chooseVideo" class="secondary" type="button">
-        Choose Video
-      </button>
+    <div id="fileInfo" class="file-info" hidden>
+      <span id="fileName"></span>
+      <span id="fileSize"></span>
     </div>
 
-    <div id="fileInfo" class="file-info">
-      No video selected.
-    </div>
+    <video id="preview" controls playsinline preload="metadata" hidden></video>
 
-    <video id="originalPreview" controls playsinline
-      preload="metadata" hidden></video>
-  </section>
-
-  <section class="panel">
-    <h2>2. Compression settings</h2>
-
-    <label class="setting" for="quality">
-      Video quality
-    </label>
-    <select id="quality">
-      <option value="23">High quality — larger file</option>
-      <option value="28" selected>Balanced — recommended</option>
-      <option value="32">Smaller file — lower quality</option>
-    </select>
-
-    <p class="note">
-      Higher compression can reduce quality. Results depend on
-      the original video. The original frame rate is preserved
-      by default; this does not create genuine 120 FPS footage.
-    </p>
-
-    <button id="compressButton" class="primary wide" type="button">
-      ⚡ Compress Video
+    <button id="clearBtn" class="secondary" type="button" hidden>
+      Remove selected video
     </button>
 
-    <progress id="progress" value="0" max="1" hidden></progress>
-    <p id="status" role="status" aria-live="polite">
-      Ready. Select a video to begin.
-    </p>
+    <div class="warning">
+      Video processing happens in your browser. Large files may use substantial
+      memory and battery, particularly on older iPhones.
+    </div>
   </section>
 
   <section class="panel">
-    <h2>3. Your compressed video</h2>
-    <div id="resultInfo" class="file-info">
-      Your result will appear here.
+    <h2>02 — Compression settings</h2>
+
+    <div class="field">
+      <label class="field-label" for="resolution">Output resolution</label>
+      <select id="resolution">
+        <option value="1080">1080p — Full HD</option>
+        <option value="720">720p — HD</option>
+        <option value="480">480p — smaller file</option>
+        <option value="original">Keep original dimensions</option>
+      </select>
     </div>
 
+    <div class="field">
+      <label class="field-label" for="fps">Output frame rate</label>
+      <select id="fps">
+        <option value="original">Keep original frame rate</option>
+        <option value="30">30 FPS</option>
+        <option value="60">60 FPS</option>
+        <option value="120">120 FPS</option>
+      </select>
+      <small>
+        Setting 60 or 120 FPS does not create genuine new motion detail.
+        The result depends on the original video.
+      </small>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="quality">Compression quality</label>
+      <select id="quality">
+        <option value="20">High quality — larger file</option>
+        <option value="23" selected>Balanced — recommended</option>
+        <option value="28">Smaller file — lower quality</option>
+      </select>
+    </div>
+
+    <button id="compressBtn" type="button" disabled>
+      Compress video
+    </button>
+
+    <div class="progress-wrap">
+      <div class="progress-top">
+        <span id="progressLabel">Waiting for video</span>
+        <span id="progressPercent">0%</span>
+      </div>
+      <progress id="progress" max="100" value="0"></progress>
+    </div>
+
+    <div id="status" class="status" role="status" aria-live="polite">
+      Choose a video to get started.
+    </div>
+  </section>
+
+  <section id="resultPanel" class="panel" hidden>
+    <h2>03 — Your compressed video</h2>
     <video id="resultPreview" controls playsinline hidden></video>
 
-    <a id="downloadButton" class="download" href="#" hidden
-      download="ibbyfx-compressed.mp4">
-      ⬇ Download Compressed Video
+    <div id="resultInfo" class="status"></div>
+
+    <a id="downloadBtn" class="download-link" href="#" download="ibbyfx-compressed.mp4">
+      Download compressed video
     </a>
+
+    <button id="startOverBtn" class="secondary" type="button">
+      Compress another video
+    </button>
   </section>
 
   <section class="panel">
-    <h2>More features</h2>
-
-    <div class="feature">
-      <strong>☁️ Video hosting and share links</strong>
-      <p class="muted">
-        Planned. Requires a separate storage service.
-        Compressing a video does not upload it or create a public link.
-      </p>
-    </div>
-
-    <div class="feature">
-      <strong>🔒 Telegram member benefits</strong>
-      <p class="muted">
-        Planned. Server-side verification will be needed for
-        unlimited member uploads and the five-upload weekly limit
-        for non-members.
-      </p>
-    </div>
-
-    <div class="feature">
-      <strong>🚀 Automatic posting</strong>
-      <p class="muted">
-        Planned for platforms that support authorized posting
-        through their official APIs.
-      </p>
-    </div>
+    <h2>Included features</h2>
+    <div class="feature">✅ <b>Video selection</b> — choose a file from your device.</div>
+    <div class="feature">✅ <b>Preview</b> — check the original and compressed video.</div>
+    <div class="feature">✅ <b>Resolution and quality controls</b> — choose output settings.</div>
+    <div class="feature">✅ <b>Progress and download</b> — track processing and save the result.</div>
+    <div class="feature">🔜 <b>Video hosting and shareable links</b> — requires a storage backend.</div>
+    <div class="feature">🔜 <b>Telegram membership limits</b> — requires secure server-side verification.</div>
+    <div class="feature">🔜 <b>Automatic posting</b> — requires supported platform APIs and account authorization.</div>
   </section>
 
-  <p class="note">
-    Processing happens in your browser. Keep this page open while
-    compressing. Large videos may exceed your device's available memory.
-    The first compression may take time while the engine loads.
-  </p>
+  <footer>
+    IBBYFX UPLOAD METHOD<br>
+    Your original file is not uploaded to a server by this page.
+  </footer>
 </main>
 
-<footer>IbbyFX UPLOAD METHOD · Video tools</footer>
+<script type="module">
+  const $ = (id) => document.getElementById(id);
 
-<!-- Pinned legacy FFmpeg API and matching core version -->
-<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
-
-<script>
-(() => {
-  const input = document.getElementById('videoUpload');
-  const addButton = document.getElementById('addVideo');
-  const chooseButton = document.getElementById('chooseVideo');
-  const compressButton = document.getElementById('compressButton');
-  const quality = document.getElementById('quality');
-  const fileInfo = document.getElementById('fileInfo');
-  const originalPreview = document.getElementById('originalPreview');
-  const resultPreview = document.getElementById('resultPreview');
-  const resultInfo = document.getElementById('resultInfo');
-  const status = document.getElementById('status');
-  const progress = document.getElementById('progress');
-  const download = document.getElementById('downloadButton');
+  const input = $("videoUpload");
+  const preview = $("preview");
+  const compressBtn = $("compressBtn");
+  const status = $("status");
+  const progress = $("progress");
+  const progressLabel = $("progressLabel");
+  const progressPercent = $("progressPercent");
+  const resultPanel = $("resultPanel");
+  const resultPreview = $("resultPreview");
+  const downloadBtn = $("downloadBtn");
 
   let selectedFile = null;
-  let ffmpeg = null;
-  let loadingPromise = null;
-  let originalURL = null;
+  let sourceURL = null;
   let outputURL = null;
+  let ffmpeg = null;
+  let busy = false;
+  let FFmpegClass = null;
+  let fetchFile = null;
+  let toBlobURL = null;
 
-  function formatSize(bytes) {
-    if (bytes < 1024 * 1024) {
-      return (bytes / 1024).toFixed(0) + ' KB';
-    }
-    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
-  }
-
-  function setStatus(message) {
+  function showStatus(message) {
     status.textContent = message;
   }
 
-  // Both buttons open the same real file input.
-  function openPicker() {
-    input.click();
+  function setProgress(percent, label) {
+    const value = Math.max(0, Math.min(100, Math.round(percent)));
+    progress.value = value;
+    progressPercent.textContent = value + "%";
+    progressLabel.textContent = label;
   }
 
-  addButton.addEventListener('click', openPicker);
-  chooseButton.addEventListener('click', openPicker);
+  function formatBytes(bytes) {
+    if (!Number.isFinite(bytes)) return "Unknown size";
+    const units = ["B", "KB", "MB", "GB"];
+    let size = bytes;
+    let index = 0;
+    while (size >= 1024 && index < units.length - 1) {
+      size /= 1024;
+      index++;
+    }
+    return size.toFixed(index === 0 ? 0 : 2) + " " + units[index];
+  }
 
-  input.addEventListener('change', () => {
+  function releaseURL(url) {
+    if (url) URL.revokeObjectURL(url);
+  }
+
+  function resetOutput() {
+    if (outputURL) releaseURL(outputURL);
+    outputURL = null;
+    resultPreview.removeAttribute("src");
+    resultPreview.hidden = true;
+    resultPanel.hidden = true;
+    downloadBtn.removeAttribute("href");
+  }
+
+  input.addEventListener("change", () => {
     const file = input.files && input.files[0];
     if (!file) return;
 
-    if (!file.type.startsWith('video/')) {
-      setStatus('Please select a video file.');
+    if (!file.type.startsWith("video/")) {
+      showStatus("Please choose a video file.");
+      input.value = "";
       return;
     }
 
     selectedFile = file;
+    resetOutput();
+    releaseURL(sourceURL);
+    sourceURL = URL.createObjectURL(file);
 
-    if (originalURL) URL.revokeObjectURL(originalURL);
-    if (outputURL) URL.revokeObjectURL(outputURL);
+    preview.src = sourceURL;
+    preview.hidden = false;
+    $("fileInfo").hidden = false;
+    $("fileName").textContent = file.name;
+    $("fileSize").textContent = formatBytes(file.size);
+    $("clearBtn").hidden = false;
+    compressBtn.disabled = false;
 
-    originalURL = URL.createObjectURL(file);
-    outputURL = null;
+    setProgress(0, "Ready");
+    showStatus("Video selected. Choose your settings and tap Compress video.");
+  });
 
-    originalPreview.src = originalURL;
-    originalPreview.hidden = false;
-    resultPreview.hidden = true;
-    download.hidden = true;
-    progress.hidden = true;
+  $("clearBtn").addEventListener("click", () => {
+    if (busy) return;
 
-    fileInfo.textContent =
-      file.name + ' · ' + formatSize(file.size);
+    selectedFile = null;
+    input.value = "";
+    preview.pause();
+    preview.removeAttribute("src");
+    preview.load();
+    preview.hidden = true;
 
-    resultInfo.textContent = 'Your result will appear here.';
-    setStatus('Video selected. Ready to compress.');
+    releaseURL(sourceURL);
+    sourceURL = null;
+    resetOutput();
+
+    $("fileInfo").hidden = true;
+    $("clearBtn").hidden = true;
+    compressBtn.disabled = true;
+
+    setProgress(0, "Waiting for video");
+    showStatus("Choose a video to get started.");
   });
 
   async function loadEngine() {
     if (ffmpeg) return ffmpeg;
-    if (loadingPromise) return loadingPromise;
 
-    loadingPromise = (async () => {
-      const library = window.FFmpeg;
+    showStatus("Loading the video compression engine. Keep this page open…");
 
-      if (!library ||
-          typeof library.createFFmpeg !== 'function' ||
-          typeof library.fetchFile !== 'function') {
-        throw new Error(
-          'FFmpeg library did not load correctly. Check your internet ' +
-          'connection and the CDN script URL.'
+    try {
+      if (!FFmpegClass || !fetchFile || !toBlobURL) {
+        const ffmpegModule = await import(
+          "https://esm.sh/@ffmpeg/ffmpeg@0.12.10"
         );
+        const utilModule = await import(
+          "https://esm.sh/@ffmpeg/util@0.12.2"
+        );
+
+        FFmpegClass = ffmpegModule.FFmpeg;
+        fetchFile = utilModule.fetchFile;
+        toBlobURL = utilModule.toBlobURL;
       }
 
-      const engine = library.createFFmpeg({
-        log: false,
-        corePath:
-          'https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js'
-      });
+      ffmpeg = new FFmpegClass();
 
-      engine.setProgress(({ ratio }) => {
-        if (Number.isFinite(ratio)) {
-          progress.value = Math.max(0, Math.min(1, ratio));
-          setStatus('Compressing video: ' +
-            Math.round(progress.value * 100) + '%');
+      ffmpeg.on("log", ({ message }) => {
+        if (message && /error|invalid|failed/i.test(message)) {
+          console.log("[FFmpeg]", message);
         }
       });
 
-      await engine.load();
-      ffmpeg = engine;
-      return engine;
-    })();
+      ffmpeg.on("progress", ({ progress: ratio }) => {
+        if (Number.isFinite(ratio)) {
+          setProgress(ratio * 90, "Compressing video…");
+        }
+      });
 
-    try {
-      return await loadingPromise;
+      const base = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
+
+      await ffmpeg.load({
+        coreURL: await toBlobURL(
+          base + "/ffmpeg-core.js",
+          "text/javascript"
+        ),
+        wasmURL: await toBlobURL(
+          base + "/ffmpeg-core.wasm",
+          "application/wasm"
+        )
+      });
+
+      return ffmpeg;
     } catch (error) {
-      loadingPromise = null;
-      throw error;
+      ffmpeg = null;
+      throw new Error(
+        "Could not load the compression engine. Check your internet connection, " +
+        "then open the live Cloudflare Pages website in Safari. Details: " +
+        (error?.message || String(error))
+      );
     }
   }
 
-  compressButton.addEventListener('click', async () => {
-    if (!selectedFile) {
-      setStatus('Tap Add Video or Choose Video first.');
-      return;
-    }
+  compressBtn.addEventListener("click", async () => {
+    if (!selectedFile || busy) return;
 
-    if (selectedFile.size > 100 * 1024 * 1024) {
-      setStatus(
-        'This test version is limited to videos under 100 MB. ' +
-        'Try a shorter clip if your iPhone runs out of memory.'
-      );
-      return;
-    }
+    busy = true;
+    compressBtn.disabled = true;
+    $("clearBtn").disabled = true;
+    resetOutput();
+    setProgress(0, "Starting");
+    showStatus("Preparing your video. Do not close this tab.");
 
-    compressButton.disabled = true;
-    addButton.disabled = true;
-    chooseButton.disabled = true;
-    progress.hidden = false;
-    progress.value = 0;
-    download.hidden = true;
-    resultPreview.hidden = true;
-
-    let inputName = 'ibbyfx-input.mp4';
-    let outputName = 'ibbyfx-output.mp4';
+    let engine = null;
+    let inputName = "input-video";
+    let outputName = "ibbyfx-compressed.mp4";
+    let wroteInput = false;
 
     try {
-      setStatus('Loading compression engine. The first load may take a while…');
+      // Extremely large videos may exceed the available memory on an iPhone.
+      if (selectedFile.size > 250 * 1024 * 1024) {
+        throw new Error(
+          "This video is over 250 MB. Try a shorter or smaller video on your iPhone."
+        );
+      }
 
-      const engine = await loadEngine();
+      engine = await loadEngine();
 
-      setStatus('Preparing your video…');
-      const data = await window.FFmpeg.fetchFile(selectedFile);
+      setProgress(2, "Reading video");
+      showStatus("Loading your video into the browser-based encoder…");
 
-      engine.FS('writeFile', inputName, data);
+      const bytes = await fetchFile(selectedFile);
+      await engine.writeFile(inputName, bytes);
+      wroteInput = true;
 
-      setStatus('Compressing video. Keep this page open…');
+      const args = ["-i", inputName, "-map", "0:v:0", "-map", "0:a?"];
 
-      const crf = String(Number(quality.value));
+      const resolution = $("resolution").value;
+      if (resolution !== "original") {
+        args.push(
+          "-vf",
+          "scale=w='min(" + (resolution === "1080" ? 1920 :
+            resolution === "720" ? 1280 : 854) +
+          ",iw)':h='min(" + (resolution === "1080" ? 1080 :
+            resolution === "720" ? 720 : 480) +
+          ",ih)':force_original_aspect_ratio=decrease:force_divisible_by=2"
+        );
+      }
 
-      await engine.run(
-        '-i', inputName,
-        '-c:v', 'libx264',
-        '-crf', crf,
-        '-preset', 'ultrafast',
-        '-c:a', 'aac',
-        '-b:a', '128k',
-        '-movflags', '+faststart',
-        outputName
+      const fps = $("fps").value;
+      if (fps !== "original") {
+        args.push("-r", fps);
+      }
+
+      const quality = $("quality").value;
+
+      args.push(
+        "-c:v", "libx264",
+        "-preset", "ultrafast",
+        "-crf", quality,
+        "-pix_fmt", "yuv420p",
+        "-c:a", "aac",
+        "-b:a", "128k",
+        "-movflags", "+faststart",
+        "-y", outputName
       );
 
-      const outputData = engine.FS('readFile', outputName);
-      const blob = new Blob([outputData], { type: 'video/mp4' });
+      setProgress(5, "Compressing");
+      showStatus(
+        "Compression is running in your browser. It may take a while on an iPhone."
+      );
+
+      await engine.exec(args);
+
+      setProgress(95, "Preparing download");
+
+      const data = await engine.readFile(outputName);
+      const blob = new Blob([data], { type: "video/mp4" });
 
       if (!blob.size) {
-        throw new Error('The compression output was empty.');
+        throw new Error("The encoder returned an empty file. Try another video.");
       }
 
-      if (outputURL) URL.revokeObjectURL(outputURL);
       outputURL = URL.createObjectURL(blob);
-
       resultPreview.src = outputURL;
       resultPreview.hidden = false;
+      downloadBtn.href = outputURL;
+      downloadBtn.download =
+        (selectedFile.name.replace(/\.[^/.]+$/, "") || "video") +
+        "-ibbyfx.mp4";
 
-      download.href = outputURL;
-      download.download = 'ibbyfx-compressed.mp4';
-      download.hidden = false;
+      $("resultInfo").textContent =
+        "Original: " + formatBytes(selectedFile.size) +
+        " · Compressed: " + formatBytes(blob.size) +
+        " · " +
+        (blob.size < selectedFile.size
+          ? "Saved " + formatBytes(selectedFile.size - blob.size)
+          : "Output is not smaller than the original.");
 
-      const difference = selectedFile.size - blob.size;
-      const percentage = Math.round(
-        (difference / selectedFile.size) * 100
-      );
+      resultPanel.hidden = false;
+      setProgress(100, "Complete");
+      showStatus("Compression finished. Preview your result and download it below.");
 
-      resultInfo.textContent =
-        'Original: ' + formatSize(selectedFile.size) +
-        ' · Compressed: ' + formatSize(blob.size) +
-        (difference > 0
-          ? ' · Reduced by ' + percentage + '%'
-          : ' · The result is not smaller than the original.');
-
-      setStatus('Compression finished. Your download is ready.');
+      try {
+        await engine.deleteFile(outputName);
+      } catch (_) {}
     } catch (error) {
-      console.error('IbbyFX compression error:', error);
-      setStatus(
-        'Compression failed: ' +
-        (error && error.message ? error.message : String(error)) +
-        ' Try refreshing the page or using a shorter video.'
+      console.error(error);
+      setProgress(0, "Failed");
+      showStatus(
+        "Compression failed: " + (error?.message || String(error)) +
+        " Try a shorter video, and test using the live Cloudflare Pages website in Safari."
       );
     } finally {
-      if (ffmpeg) {
-        try { ffmpeg.FS('unlink', inputName); } catch (_) {}
-        try { ffmpeg.FS('unlink', outputName); } catch (_) {}
+      if (engine && wroteInput) {
+        try { await engine.deleteFile(inputName); } catch (_) {}
       }
 
-      compressButton.disabled = false;
-      addButton.disabled = false;
-      chooseButton.disabled = false;
+      busy = false;
+      compressBtn.disabled = !selectedFile;
+      $("clearBtn").disabled = false;
     }
   });
 
-  window.addEventListener('beforeunload', () => {
-    if (originalURL) URL.revokeObjectURL(originalURL);
-    if (outputURL) URL.revokeObjectURL(outputURL);
+  $("startOverBtn").addEventListener("click", () => {
+    if (busy) return;
+    $("clearBtn").click();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   });
-})();
+
+  window.addEventListener("beforeunload", () => {
+    releaseURL(sourceURL);
+    releaseURL(outputURL);
+  });
 </script>
 </body>
 </html>
